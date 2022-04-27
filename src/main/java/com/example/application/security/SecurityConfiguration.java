@@ -25,7 +25,25 @@ public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         super.configure(http);
+        //1.
+        // Causes blank page with error message in browser console about unsafe-inline
+        //http.headers().contentSecurityPolicy("script-src 'self'");
+
+        //2.
+        //Causes an eval to fail...
+        //http.headers().contentSecurityPolicy("script-src 'unsafe-inline' 'self'");
+
+        //3.
+        //App working again at least on dev machine...
+        http.headers().contentSecurityPolicy("script-src 'unsafe-inline' 'unsafe-eval' 'self'");
+
+        /*
+         *TODO, style-src 'unsafe-inline' is also mentioned in the FAQ, however did not seem to be needed in the hello world app.
+         * Multiple CSP rules can be given at the same time separated by ; as described for instance here:
+         * https://www.baeldung.com/spring-security-csp
+         */
         setLoginView(http, LoginView.class, LOGOUT_URL);
+
     }
 
     @Override
@@ -34,3 +52,4 @@ public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/images/*.png");
     }
 }
+
